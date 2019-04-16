@@ -121,7 +121,7 @@ for i in range(p):
     futures.append(dask.delayed(calc_mean)(i, n))  # add lazy task
 
 futures
-results = dask.compute(*futures)  # compute all in parallel</code></pre>
+results = dask.compute(futures)  # compute all in parallel</code></pre>
 <h3 id="list-comprehension">list comprehension</h3>
 <pre><code>import dask.multiprocessing
 dask.config.set(scheduler=&#39;processes&#39;, num_workers = 4)  
@@ -130,12 +130,12 @@ n = 10000000
 p = 10
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 futures
-results = dask.compute(*futures)</code></pre>
+results = dask.compute(futures)</code></pre>
 <p>You could set the scheduler in the <code>compute</code> call:</p>
-<pre><code>results = dask.compute(*future, scheduler = &#39;processes&#39;)</code></pre>
+<pre><code>results = dask.compute(futures, scheduler = &#39;processes&#39;)</code></pre>
 <p>but it is best practice to separate what is parallelized from where the parallelization is done, specifying the scheduler at the start of your code.</p>
 <h1 id="parallel-maps">5.2. Parallel maps</h1>
-<p>We can do parallel map operations (i.e., a map in the map-reduce or functional programming sense, akin to <code>lapply</code> in R).</p>
+<p>We can do parallel map operations (i.e., a map in the map-reduce or functional programming sense, akin to <code>map</code> in <code>ipyparallel</code>).</p>
 <p>For this we need to use the distributed scheduler, which we'll discuss more later. But note that the distributed scheduler can work on one or more nodes.</p>
 <pre><code># ignore this setup for now; we&#39;ll see it again later
 from dask.distributed import Client, LocalCluster
@@ -313,7 +313,7 @@ p = 4
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0    # 20 sec.</code></pre>
 <p>In this case the parallelization is not very effective, as computation for a single iteration is about 5 seconds. We can see in <code>top</code> that the Python process only uses about 1 core (100% CPU usage rather than 400% CPU usage).</p>
 <p>Note that because of Python's Global Interpreter Lock (GIL), many computations done in pure Python code cannot be parallelized using the 'threaded' scheduler; however computations on numeric data in numpy arrays, pandas dataframes and other C/C++/Cython-based code will parallelize.</p>
@@ -327,7 +327,7 @@ futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 
 
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0  # 5 sec.</code></pre>
 <h1 id="multi-process-parallelization-via-dask-distributed-local">7.3. Multi-process parallelization via Dask Distributed (local)</h1>
 <p>According to the Dask documentation, using Distributed on a local machine has advantages over multiprocessing, including the diagnostic dashboard (see Section 9) and better handling of when copies need to be made. As we saw previously using Distributed also allows us to use the handy <code>map()</code> operation.</p>
@@ -337,7 +337,7 @@ c = Client(cluster)
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0   # 7 sec.</code></pre>
 <h1 id="distributed-processing-using-multiple-machines-within-a-slurm-scheduler-job">7.4. Distributed processing using multiple machines within a SLURM scheduler job</h1>
 <p>To run within a SLURM job we can use <code>dask-scheduler</code> and <code>dask-worker</code> to start up the necessary worker processes.</p>
@@ -370,7 +370,7 @@ n = 100000000
 p = 40
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0   # 7 sec.</code></pre>
 <p>Ordinarily we would do this in a SLURM job script, as shown in <code>wiki-example.sh</code>, which calls <code>wiki-example.py</code>.</p>
 <pre><code>#!/bin/bash
@@ -435,7 +435,7 @@ n = 100000000
 p = 4
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
-results = dask.compute(*futures)
+results = dask.compute(futures)
 c.close()</code></pre>
 <p>I don't see that <code>c.close</code> shuts down the scheduler and worker processes, so do it the hard way...</p>
 <pre><code>ps aux | grep dask-ssh | head -n 1 | awk -F&#39; &#39; &#39;{print $2}&#39; | xargs kill</code></pre>
@@ -462,7 +462,7 @@ for param in params:
     out.append(out_single_param)
 
 t0 = time.time()
-output = dask.compute(*out)  # 15 sec. on 4 cores
+output = dask.compute(out)  # 15 sec. on 4 cores
 time.time() - t0</code></pre>
 <h1 id="load-balancing-and-static-vs.-dynamic-task-allocation">8.2. Load-balancing and static vs. dynamic task allocation</h1>
 <p>When using <code>delayed</code>, Dask starts up each delayed evaluation separately (i.e., dynamic allocation). This is good for load-balancing, but each task induces some overhead (a few hundred microseconds). If you have many quick tasks, you probably want to break them up into batches manually, to reduce the impact of the overhead.</p>
@@ -515,7 +515,7 @@ def calc(x, i):
 p = 20
 out = [dask.delayed(calc)(x, i) for i in range(p)]
 t0 = time.time()
-output = dask.compute(*out)
+output = dask.compute(out)
 time.time() - t0   # about 20 sec. so ~4 sec. per task
 
 
@@ -539,7 +539,7 @@ def calc(x, i):
 p = 20
 out = [dask.delayed(calc)(x, i) for i in range(p)]
 t0 = time.time()
-output = dask.compute(*out)
+output = dask.compute(out)
 time.time() - t0    # 2.5 sec. </code></pre>
 <p>That took a few seconds if we delay the data but takes ~40 seconds if we don't. Note that Dask does warn us if it detects a situation like this where we haven't delayed the data.</p>
 <h1 id="parallel-io">8.5. Parallel I/O</h1>
@@ -562,7 +562,7 @@ for yr in range(1988, 2009):
 
 import time
 t0 = time.time()
-output = dask.compute(*results)  # parallel I/O
+output = dask.compute(results)  # parallel I/O
 time.time() - t0   ## 65 seconds for 21 files
 
 
@@ -590,7 +590,7 @@ p = 40
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0</code></pre>
 <h1 id="on-savio-with-a-local-cluster">9.2. On Savio with a Local Cluster</h1>
 <p>On Savio, we need to use the <a href="http://research-it.berkeley.edu/services/high-performance-computing/using-brc-visualization-node-realvnc">visualization node</a> to see the web interface (web UI).</p>
@@ -614,7 +614,7 @@ p = 40
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0</code></pre>
 <h1 id="on-savio-with-a-distributed-cluster">9.3. On Savio with a Distributed Cluster</h1>
 <p>With the distributed cluster, there is no <code>ip</code> argument to <code>Client()</code> and on Savio, you should just be able to view the UI from the visualization node.</p>
@@ -650,7 +650,7 @@ rng = rg.MT19937(seed)  ## set an overall seed and pass the MT object to the wor
 for i in range(p):
     results.append(dask.delayed(calc_mean)(i, n, rng))  # add lazy task
 
-output = dask.compute(*results)  # compute all in parallel</code></pre>
+output = dask.compute(results)  # compute all in parallel</code></pre>
 <p>Apparently you may be able to address this issue in dask.array using the RandomState class but I'm having trouble finding documentation on this.</p>
 <pre><code>import dask.array as da
 state = da.random.RandomState(1234)

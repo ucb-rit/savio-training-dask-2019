@@ -178,7 +178,7 @@ for i in range(p):
     futures.append(dask.delayed(calc_mean)(i, n))  # add lazy task
 
 futures
-results = dask.compute(*futures)  # compute all in parallel
+results = dask.compute(futures)  # compute all in parallel
 ```
 
 ### list comprehension
@@ -191,20 +191,20 @@ n = 10000000
 p = 10
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 futures
-results = dask.compute(*futures)
+results = dask.compute(futures)
 ```
 
 You could set the scheduler in the `compute` call:
 
 ```
-results = dask.compute(*future, scheduler = 'processes')
+results = dask.compute(futures, scheduler = 'processes')
 ```
 
 but it is best practice to separate what is parallelized from where the parallelization is done, specifying the scheduler at the start of your code.
 
 # 5.2. Parallel maps
 
-We can do parallel map operations (i.e., a map in the map-reduce or functional programming sense, akin to `lapply` in R).
+We can do parallel map operations (i.e., a map in the map-reduce or functional programming sense, akin to `map` in `ipyparallel`).
 
 For this we need to use the distributed scheduler, which we'll discuss more later.
 But note that the distributed scheduler can work on one or more nodes.
@@ -472,7 +472,7 @@ p = 4
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0    # 20 sec.
 ```
 
@@ -495,7 +495,7 @@ futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 
 
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0  # 5 sec.
 ```
 
@@ -513,7 +513,7 @@ c = Client(cluster)
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0   # 7 sec.
 ```
 
@@ -562,7 +562,7 @@ n = 100000000
 p = 40
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0   # 7 sec.
 ```
 
@@ -663,7 +663,7 @@ n = 100000000
 p = 4
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
-results = dask.compute(*futures)
+results = dask.compute(futures)
 c.close()
 ```
 
@@ -702,7 +702,7 @@ for param in params:
     out.append(out_single_param)
 
 t0 = time.time()
-output = dask.compute(*out)  # 15 sec. on 4 cores
+output = dask.compute(out)  # 15 sec. on 4 cores
 time.time() - t0
 ```
 
@@ -787,7 +787,7 @@ def calc(x, i):
 p = 20
 out = [dask.delayed(calc)(x, i) for i in range(p)]
 t0 = time.time()
-output = dask.compute(*out)
+output = dask.compute(out)
 time.time() - t0   # about 20 sec. so ~4 sec. per task
 
 
@@ -817,7 +817,7 @@ def calc(x, i):
 p = 20
 out = [dask.delayed(calc)(x, i) for i in range(p)]
 t0 = time.time()
-output = dask.compute(*out)
+output = dask.compute(out)
 time.time() - t0    # 2.5 sec. 
 ```
 
@@ -855,7 +855,7 @@ for yr in range(1988, 2009):
 
 import time
 t0 = time.time()
-output = dask.compute(*results)  # parallel I/O
+output = dask.compute(results)  # parallel I/O
 time.time() - t0   ## 65 seconds for 21 files
 
 
@@ -894,7 +894,7 @@ p = 40
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0
 ```
 
@@ -928,7 +928,7 @@ p = 40
 
 futures = [dask.delayed(calc_mean)(i, n) for i in range(p)]
 t0 = time.time()
-results = dask.compute(*futures)
+results = dask.compute(futures)
 time.time() - t0
 ```
 
@@ -979,7 +979,7 @@ rng = rg.MT19937(seed)  ## set an overall seed and pass the MT object to the wor
 for i in range(p):
     results.append(dask.delayed(calc_mean)(i, n, rng))  # add lazy task
 
-output = dask.compute(*results)  # compute all in parallel
+output = dask.compute(results)  # compute all in parallel
 ```
 
 Apparently you may be able to address this issue in dask.array using the RandomState class
