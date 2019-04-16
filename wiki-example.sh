@@ -7,9 +7,9 @@
 
 module load python/3.6
 export SCHED=$(hostname)
-dask-scheduler &
+~/.local/bin/dask-scheduler &
 sleep 20
-srun dask-worker tcp://${SCHED}:8786 &   # might need ${SCHED}.berkeley.edu
+srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 &   
 sleep 180
 
 python dask-example.py

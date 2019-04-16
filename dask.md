@@ -536,9 +536,9 @@ srun -A ac_scsguest -p savio --ntasks=40 -t 30:00 --pty bash
 
 module load python/3.6
 export SCHED=$(hostname)
-dask-scheduler &
+~/.local/bin/dask-scheduler &
 sleep 10
-srun dask-worker tcp://${SCHED}:8786 &   
+srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 &   
 sleep 40
 python
 ```
@@ -579,9 +579,9 @@ Ordinarily we would do this in a SLURM job script, as shown in
 
 module load python/3.6
 export SCHED=$(hostname)
-dask-scheduler &
+~/.local/bin/dask-scheduler &
 sleep 10
-srun dask-worker tcp://${SCHED}:8786 &   # might need ${SCHED}.berkeley.edu
+srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 & 
 sleep 20
 python
 ```
