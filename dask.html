@@ -348,9 +348,9 @@ time.time() - t0   # 7 sec.</code></pre>
 
 module load python/3.6
 export SCHED=$(hostname)
-dask-scheduler &amp;
+~/.local/bin/dask-scheduler &amp;
 sleep 10
-srun dask-worker tcp://${SCHED}:8786 &amp;   
+srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 &amp;   
 sleep 40
 python</code></pre>
 <p>Now in Python, we can connect to the running cluster and do our work.</p>
@@ -382,9 +382,9 @@ time.time() - t0   # 7 sec.</code></pre>
 
 module load python/3.6
 export SCHED=$(hostname)
-dask-scheduler &amp;
+~/.local/bin/dask-scheduler &amp;
 sleep 10
-srun dask-worker tcp://${SCHED}:8786 &amp;   # might need ${SCHED}.berkeley.edu
+srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 &amp; 
 sleep 20
 python</code></pre>
 <p>Then in Python, connect to the cluster via the scheduler.</p>
