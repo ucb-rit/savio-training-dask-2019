@@ -12,4 +12,4 @@ sleep 20
 srun ~/.local/bin/dask-worker tcp://${SCHED}:8786 &   
 sleep 180
 
-python dask-example.py
+python wiki-example.py
