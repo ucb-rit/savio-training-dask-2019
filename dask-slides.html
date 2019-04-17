@@ -68,8 +68,9 @@
 <p>The idea of a 'future' or 'delayed' operation is to tag operations such that they run lazily. Multiple operations can then be pipelined together and Dask can figure out how best to compute them in parallel on the computational resources available to a given user (which may be different than the resources available to a different user).</p>
 <p>The version of Dask on Savio is rather old, so let's install the current version in the shell via pip and then import it to get started.</p>
 <pre><code>module load python/3.6
-pip install --user dask
-pip install --user bokeh==1.1.0 # not essential, but need for graphical monitoring to work</code></pre>
+pip install --user --upgrade dask
+pip install --user --upgrade distributed
+pip install --user --upgrade bokeh==1.1.0 # not essential, but need for graphical monitoring to work</code></pre>
 <pre><code>import dask</code></pre>
 </div>
 <div id="overview-of-parallel-schedulers" class="slide section level1">

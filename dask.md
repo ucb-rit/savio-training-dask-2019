@@ -111,8 +111,9 @@ The version of Dask on Savio is rather old, so let's install the current version
 
 ```
 module load python/3.6
-pip install --user dask
-pip install --user bokeh==1.1.0 # not essential, but need for graphical monitoring to work
+pip install --user --upgrade dask
+pip install --user --upgrade distributed
+pip install --user --upgrade bokeh==1.1.0 # not essential, but need for graphical monitoring to work
 ```
 
 ```
