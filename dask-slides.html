@@ -661,7 +661,7 @@ time.time() - t0</code></pre>
 <h1>9.2. On Savio with a Local Cluster</h1>
 <p>On Savio, we need to use the <a href="http://research-it.berkeley.edu/services/high-performance-computing/using-brc-visualization-node-realvnc">visualization node</a> to see the web interface (web UI).</p>
 <p>First you'll need to start your Python process and set up the Dask cluster.</p>
-<p>Then you'll need to follow <a href="http://research-it.berkeley.edu/services/high-performance-computing/using-brc-visualization-node-realvnc">these instructions</a> to connect to the visualization node. Once on the visualization node, you'll open a browser and connect to the relevant port (port 8787 by default) on the node on which your Python process is running.</p>
+<p>Then you'll need to follow <a href="http://research-it.berkeley.edu/services/high-performance-computing/using-brc-visualization-node-realvnc">these instructions</a> to connect to the visualization node. Once on the visualization node, you'll open a browser (you can run <code>firefox</code> from the terminal) and connect to the relevant port (port 8787 by default) on the node on which your Python process is running.</p>
 <p>Note that the <code>ip = &quot;*&quot;</code> argument is critical for allowing one to view the web UI from the viz node.</p>
 <pre><code>## in an interactive (srun) session (and note the name of the node you ar running on)
 from dask.distributed import Client, LocalCluster

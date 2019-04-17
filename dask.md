@@ -906,7 +906,7 @@ On Savio, we need to use the [visualization node](http://research-it.berkeley.ed
 First you'll need to start your Python process and set up the Dask cluster.
 
 Then you'll need to follow [these instructions](http://research-it.berkeley.edu/services/high-performance-computing/using-brc-visualization-node-realvnc) to connect to the visualization node.
-Once on the visualization node, you'll open a browser and connect to the relevant port
+Once on the visualization node, you'll open a browser (you can run `firefox` from the terminal) and connect to the relevant port
 (port 8787 by default) on the node on which your Python process is running.
 
 Note that the `ip = "*"` argument is critical for allowing one to view the web UI from the viz node.
